@@ -1,0 +1,1 @@
+phpunit classes\mappers\eventMapperTest.php -c phpunit.xml

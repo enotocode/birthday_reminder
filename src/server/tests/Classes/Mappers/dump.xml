@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="birthday_reminder">
+	<table_data name="event_to_participant">
+	<row>
+		<field name="event_id">1</field>
+		<field name="participant_id">1</field>
+	</row>
+	<row>
+		<field name="event_id">2</field>
+		<field name="participant_id">2</field>
+	</row>
+	<row>
+		<field name="event_id">2</field>
+		<field name="participant_id">3</field>
+	</row>
+	</table_data>
+	<table_data name="event_types">
+	<row>
+		<field name="id">1</field>
+		<field name="type">BIRTHDAY</field>
+		<field name="is_annual">1</field>
+		<field name="description">Anniversary of birth, corresponds to the date of birth of a person.</field>
+		<field name="user_id">1</field>
+	</row>
+	<row>
+		<field name="id">2</field>
+		<field name="type">WEDDING</field>
+		<field name="is_annual">0</field>
+		<field name="description">A wedding is a ceremony where two people or a couple are united in marriage.</field>
+		<field name="user_id">1</field>
+	</row>
+	</table_data>
+	<table_data name="events">
+	<row>
+		<field name="id">1</field>
+		<field name="date">2018-06-06</field>
+		<field name="title">Granny`s birthday</field>
+		<field name="description">She turns 101</field>
+		<field name="event_type_id">1</field>
+		<field name="user_id">1</field>
+	</row>
+	<row>
+		<field name="id">2</field>
+		<field name="date">2018-03-18</field>
+		<field name="title">Old fashion wedding</field>
+		<field name="description">Everyone invited</field>
+		<field name="event_type_id">2</field>
+		<field name="user_id">1</field>
+	</row>
+	<row>
+		<field name="id">3</field>
+		<field name="date">2018-01-30</field>
+		<field name="title">My brthd</field>
+		<field name="description">Go</field>
+		<field name="event_type_id">1</field>
+		<field name="user_id">1</field>
+	</row>
+	</table_data>
+	<table_data name="participants">
+	<row>
+		<field name="id">1</field>
+		<field name="name">Granny</field>
+		<field name="last_name">Enotova</field>
+		<field name="description">My favorite granny</field>
+		<field name="user_id">1</field>
+	</row>
+	<row>
+		<field name="id">2</field>
+		<field name="name">Vova</field>
+		<field name="last_name" xsi:nil="true" />
+		<field name="description" xsi:nil="true" />
+		<field name="user_id">1</field>
+	</row>
+	<row>
+		<field name="id">3</field>
+		<field name="name">Russia</field>
+		<field name="last_name">Mother</field>
+		<field name="description"></field>
+		<field name="user_id">1</field>
+	</row>
+	</table_data>
+	<table_data name="reminders">
+	<row>
+		<field name="id">1</field>
+		<field name="datetime">2018-06-06 10:00:00</field>
+		<field name="description">Phone your Granny</field>
+		<field name="event_id">1</field>
+	</row>
+	<row>
+		<field name="id">2</field>
+		<field name="datetime">2018-04-01 10:00:00</field>
+		<field name="description">Get visa</field>
+		<field name="event_id">2</field>
+	</row>
+	<row>
+		<field name="id">3</field>
+		<field name="datetime">2018-05-01 10:00:00</field>
+		<field name="description">Buy ticket</field>
+		<field name="event_id">2</field>
+	</row>
+	</table_data>
+	<table_data name="users">
+	<row>
+		<field name="id">1</field>
+		<field name="name">admin</field>
+		<field name="email">hunnter@gmail.com</field>
+		<field name="pass_hash">$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a</field>
+		<field name="role">admin</field>
+	</row>
+	</table_data>
+</database>
+</mysqldump>

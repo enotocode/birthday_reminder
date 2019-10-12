@@ -1,0 +1,11 @@
+# Untracked dirs:
+.idea/
+nbproject/
+node_modules/
+notes/
+vendor/
+UI-prototype/*
+UI-prototype/Reference/
+web/
+src/server/Logs/*
+!/src/server/Logs/

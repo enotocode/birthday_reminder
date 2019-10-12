@@ -1,0 +1,44 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?bb9vi2');
+  src:  url('fonts/icomoon.eot?bb9vi2#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?bb9vi2') format('truetype'),
+    url('fonts/icomoon.woff?bb9vi2') format('woff'),
+    url('fonts/icomoon.svg?bb9vi2#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*[class^="icon-"], [class*=" icon-"] {*/
+
+
+
+
+.icon-alarm:before {
+  content: "\e950";
+}
+.icon-bell:before {
+  content: "\e951";
+}
+.icon-key:before {
+  content: "\e98d";
+}
+.icon-key2:before {
+  content: "\e98e";
+}
+.icon-bin:before {
+  content: "\e9ac";
+  /* delete */
+}
+.icon-plus:before {
+  content: "\ea0a";
+}
+.icon-cancel-circle:before {
+  content: "\ea0d";
+}
+.icon-cross:before {
+  content: "\ea0f";
+}
+.icon-enter:before {
+  content: "\ea13";
+}
