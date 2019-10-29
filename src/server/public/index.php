@@ -6,6 +6,8 @@ require_once __DIR__ . '/../Services/autoloader.php';
 use Symfony\Component\HttpFoundation\Request;
 //use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+// use Classes\TokenAuthenticator;
 
 $app = new Silex\Application();
 $app['debug'] = true;
@@ -27,7 +29,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'driver'   => 'pdo_mysql',
         'dbname'   => 'birthday_reminder',
         'user'     => 'root', //'reminder_app',
-        'password' => '',//'12345',
+        'password' => 'masterkey',//'12345',
         'host'     => 'localhost',
         'charset'  => 'UTF8'
     ),
@@ -39,7 +41,7 @@ $app->register(new Silex\Provider\ValidatorServiceProvider(), array(
         'validator.userNameExists' => 'validator.userNameExists'
     )
 ));
-// $app->register(new Silex\Provider\SessionServiceProvider());
+$app->register(new Silex\Provider\SessionServiceProvider());
 
 
 // $app->register(new Silex\Provider\SecurityServiceProvider(), array(
@@ -86,27 +88,60 @@ $app->register(new Silex\Provider\ValidatorServiceProvider(), array(
 // ));
 
 $app['app.token_authenticator'] = function ($app) {
-    return new App\Security\TokenAuthenticator($app['security.encoder_factory']);
+    return new TokenAuthenticator($app['security.encoder_factory']);
 };
-$app['security.firewalls'] = array(
-    'main' => array(
-        'guard' => array(
-            'authenticators' => array(
-                'app.token_authenticator'
-            ),
 
-            // Using more than 1 authenticator, you must specify
-            // which one is used as entry point.
-            // 'entry_point' => 'app.token_authenticator',
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => array(
+        'main' => array(
+            'guard' => array(
+                'authenticators' => array(
+                    'app.token_authenticator'
+                ),
+                // Using more than 1 authenticator, you must specify
+                // which one is used as entry point.
+                // 'entry_point' => 'app.token_authenticator',
+            ),
+            // configure where your users come from. Hardcode them, or load them from somewhere
+            // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
+            'users' =>  function () use ($app) {
+                    return new UserProvider($app['db']);
+                },
+            // 'anonymous' => true
+            // 'users' => array(
+            // //raw password = foo
+            //     'test' => array('ROLE_USER', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
+            // ),
+
         ),
-        // configure where your users come from. Hardcode them, or load them from somewhere
-        // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
-        'users' =>  function () use ($app) {
-                return new UserProvider($app['db']);
-            },
-        // 'anonymous' => true
-    ),
-);
+)));
+
+
+// $app['security.firewalls'] = array(
+//     'main' => array(
+//         'guard' => array(
+//             'authenticators' => array(
+//                 'app.token_authenticator'
+//             ),
+//             // Using more than 1 authenticator, you must specify
+//             // which one is used as entry point.
+//             // 'entry_point' => 'app.token_authenticator',
+//         ),
+//         // configure where your users come from. Hardcode them, or load them from somewhere
+//         // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
+//         // 'users' =>  function () use ($app) {
+//         //         return new UserProvider($app['db']);
+//         //     },
+//         // 'anonymous' => true
+//         'users' => array(
+//         //raw password = foo
+//             'test' => array('ROLE_USER', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
+//         ),
+
+//     ),
+// );
+
+
 
 // App Middleware
 $app->before(function (Request $request) {

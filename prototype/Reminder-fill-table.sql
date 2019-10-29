@@ -22,6 +22,14 @@ INSERT INTO event_types VALUES (
     'A wedding is a ceremony where two people or a couple are united in marriage.',
     1
 );
+/* Add event type */
+INSERT INTO event_types VALUES (
+    NULL,
+    'HOLIDAY',
+    2,
+    'Just another holiday',
+    1
+);
 /* Add event */
 INSERT INTO events VALUES (
     NULL,
