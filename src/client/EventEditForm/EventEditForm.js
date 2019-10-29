@@ -21,6 +21,7 @@ class EventEditForm extends React.Component {
         this.state.statusBar = statusBar; //for displaing messages for user 
         this.state.inputs = inputs;
         this.state.eventRect=eventRect;
+        this.state.edited = false;
         
         // for rigth positioning form relatively borders of the browser window, 
         // because we can't define form's width before form will be rendered, 
@@ -40,7 +41,8 @@ class EventEditForm extends React.Component {
         this.state.eventTypes = nextProps.eventTypes;
         if (nextProps.event) {
             this.hydrateInputs(nextProps.event);
-        }           
+        }
+        this.state.edited = false;           
     }
     
     getCoordinates(eventRect) {
@@ -107,12 +109,14 @@ class EventEditForm extends React.Component {
     }
     onInputChange(name, value) {
         // pass the prevState to get latest version of the state
-        console.log(value);
-        console.log(name);
+        // console.log(value);
+        // console.log(name);
         this.setState((prevState) => {
-            let inputs = prevState.inputs;     
+            let edited = false;
+            let inputs = prevState.inputs;                 
             let newInputs = inputs.map((input, i) => {
                  if (input.name === name) {
+                    edited = true;
                     return Object.assign({}, input, {
                         value: value,
                         errorMessage: ''
@@ -120,8 +124,8 @@ class EventEditForm extends React.Component {
                 }            
                 return input;
             });
-            console.log(newInputs);
-            return { inputs: newInputs }
+            // console.log('edited: ' + edited);
+            return { inputs: newInputs, edited: edited }
             })
     }
     
@@ -235,7 +239,7 @@ class EventEditForm extends React.Component {
                         <Button
                             myClasses="icon-bin"
                             text='Save'
-                            onClick = {()=> this.props.onSave( this.saveInputsIntoEvent() )}
+                            onClick = {()=> this.props.onSave( this.saveInputsIntoEvent(), this.state.edited)}
                             isDisabled={this.state.status.isDisabled}
                             isSubmiting={this.state.status.isSubmiting}
                             right="right"
@@ -244,6 +248,5 @@ class EventEditForm extends React.Component {
                     )
     }
 }
-
 
 export default EventEditForm;

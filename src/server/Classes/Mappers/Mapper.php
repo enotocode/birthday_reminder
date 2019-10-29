@@ -12,13 +12,19 @@ abstract class Mapper {
         }
     }
     
-    public function findById($id) {
+    public function getById($id) {
+
+        global $log;
         
-        $stmt = self::$dbal->executeQuery(static::$findByIdStm, array($id));
+        $stmt = self::$dbal->executeQuery($this->getByIdStm, array($id));
         $array = $stmt->fetchAll();
+
+        $log->notice("getById: " . json_encode($array));
         
-        if ( ! is_array($array) || ! isset($array[$id]) ) {
-            throw new Exception('Could not find Event by id: ' . $id);
+        if ( !is_array($array) || !empty($array) ) {
+            // throw new Exception('Could not find Event by id: ' . $id);
+            $log->notice("check: " . is_array($array) . ':' . isset($array['id']));
+            return false;
         }
         
         $event = static::createObject($array);         
@@ -31,19 +37,19 @@ abstract class Mapper {
      * @return type
      * @throws Exception
      */   
-    public function findAll($id = NULL) {
+    public function getAll($id = NULL) {
 
         global $log;
         
         if ($id === NULL) {
-            throw new Exception('"findAll()" method must be call with $id argument');
+            throw new Exception('"getAll()" method must be call with $id argument');
         }
         
         if ( ! is_numeric($id) ) {
             throw new Exception('Argument $id must be number, given: ' . $id);
         }
         
-        $stmt = self::$dbal->executeQuery($this->findAllStm, array($id));
+        $stmt = self::$dbal->executeQuery($this->getAllStm, array($id));
         $array = $stmt->fetchAll();
         
         if ( empty($array) ) {

@@ -44,7 +44,7 @@ class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
         // if AJAX login
         if ( $request->isXmlHttpRequest() ) {
 
-            $array = array( 'success' => true ); // data to return via JSON
+            $array = array( 'success' => true, 'token' => $token->__toString()); // data to return via JSON
             $response = new Response( json_encode( $array ), 200 );
             $response->headers->set( 'Content-Type', 'application/json' );
 

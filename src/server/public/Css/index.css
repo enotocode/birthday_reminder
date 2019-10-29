@@ -50,6 +50,9 @@ ol, ul {
     border-bottom: 1px solid rgba(0,0,0,.1);
     align-items: center;
 }
+.event:hover {
+    background: #eff6fb; 
+} 
 .event-list {
     padding: 10px;
     flex: 0 0 18em;
@@ -193,14 +196,15 @@ ol, ul {
 
 .day-cell {
     font-size: 12px;
-    padding: 4px 0 0 0;
+    padding: 0 0 0 0;
     background: #white;
     border-left: 1px solid rgba(0,0,0,.1);
     border-bottom: 1px solid rgba(0,0,0,.1);
     color: #909090;
 }
 .day-span {
-    margin: 0 0 0 6px;
+    margin: 4px 0 0 6px;
+    display: inline-block;
 }
 .label.current-date {
     padding-left: 2px;
@@ -213,8 +217,11 @@ ol, ul {
 
 .day {
     flex-grow: 1;
-
 }
+
+.day:hover {
+    background: #eff6fb; 
+} 
 
 .week-row {
     float: none;

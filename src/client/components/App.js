@@ -26,10 +26,10 @@ import EventEditForm from '../EventEditForm/EventEditForm';
 import DateSwitcher from './DateSwitcher';
 import yyyymmdd from '../Helpers/yyyymmdd';
 
-// Events
+// Services
 import {saveEvent} from '../services/apiCall';
 import {getAllEvents} from '../services/apiCall';
-
+import {decodeJsonApi} from '../services/jsonApiToObject';
 
 /*
  * App component
@@ -38,62 +38,10 @@ class App extends React.Component {
     
     constructor(props) {
         super(props);
-        
-        getAllEvents()
-            .then((response) => {
-                console.log(response);
-                // newEvent.id = response.id;
-                // var newEvents = this.state.events.push(newEvent);
-                // this.setState({
-                //     events: newEvents
-                // });
-             })
-            .catch(errors => {
-                console.log(errors);
-            });
 
         this.state = { 
             events: [
-                { 
-                    id: 1,
-                    title: 'Granys Birthday', 
-                    // type: 'BIRTHDAY',
-                    event_type_id: 1,
-                    date: '2019-10-06',
-                    isNew: false
-                },
-                { 
-                    id: 2,
-                    title: 'Alex wedding', 
-                    // type: 'WEDDING',
-                    event_type_id: 0,
-                    date: '2019-10-11',
-                    isNew: false
-                },
-                { 
-                    id: 3,
-                    title: 'New Year', 
-                    // type: 'HOLIDAY',
-                    event_type_id: 2,
-                    date: '2019-10-31',
-                    isNew: false
-                },
-                { 
-                    id: 4,
-                    title: 'Christmas', 
-                    // type: 'HOLIDAY',
-                    event_type_id: 2,
-                    date: '2019-10-25',
-                    isNew: false
-                },
-                { 
-                    id: 5,
-                    title: 'Train', 
-                    // type: 'HOLIDAY',
-                    event_type_id: 2,
-                    date: '2019-10-12',
-                    isNew: false
-                }
+           
             ],
             eventTypes: [
                 {
@@ -110,7 +58,7 @@ class App extends React.Component {
             eventEditFormEventId: null,
             eventEditFormDate: null,
             date: new Date()
-        };
+        };        
         
         this.toggleEventEditForm = this.toggleEventEditForm.bind(this);
         this.editEvent = this.editEvent.bind(this);
@@ -118,10 +66,25 @@ class App extends React.Component {
         this.nextMonth = this.nextMonth.bind(this);
         this.prevMonth = this.prevMonth.bind(this);
     }
+
+    componentDidMount() {
+        getAllEvents()
+            .then((response) => {
+                // console.log(response);
+                // console.log(decodeJsonApi(response));
+                let events = decodeJsonApi(response);
+                this.setState({ events: events });
+             })
+            .catch(errors => {
+                console.log(errors);
+            });
+    }
     
     toggleEventEditForm(eventId, e, day) {  
-        console.log(day); 
+        console.log(day);
+        console.log('eventId: ' + eventId);  
         var eventRect = (e) ? e.target.getBoundingClientRect() : null;
+
         this.setState( (prevState) => {
             let prId = prevState.eventEditFormEventId;
             let prShow = prevState.eventEditFormShow;
@@ -149,67 +112,58 @@ class App extends React.Component {
             eventEditFormNewEventDate: newEventDate
         }});
     }
-    editEvent(newEvent) {
-        // save new event in db and get id
-        if(newEvent.isNew) {
+    editEvent(newEvent, edited) {
+        // console.log(edited);
+        // console.log(newEvent.id);
+        // save edited event in db
+        if(edited) {
             saveEvent(newEvent)
                 .then((response) => {
-                    newEvent.id = response.id;
-                    var newEvents = this.state.events.push(newEvent);
-                    this.setState({
-                        events: newEvents
-                    });
-                 })
+                // new event
+                    if (newEvent.id < 0) {                        
+                        this.setState( prevState => {
+                            newEvent.id = response.id;
+                            var newEvents = this.state.events.concat(newEvent);
+                            return { events: newEvents }
+                        });
+                    } else {
+                // existens event
+                        var id = newEvent.id;
+                        // var key;
+                        var newEvents = this.state.events.map( (event, i) => {
+                            // replace old event whith new event in events[]
+                            if (event.id === id) return newEvent;
+                            return event;
+                        });
+                        this.setState({
+                            events: newEvents
+                        });   
+                    }
+                })
                 .catch(errors => {
                     console.log(errors);
-                })
-        // edit existens event
-        } else {
-            var id = newEvent.id;
-            // var key;
-            var newEvents = this.state.events.map( (event, i) => {
-                // replace old event whith new event in events[]
-                if (event.id === id) return newEvent;
-                return event;
-            });
-            this.setState({
-                events: newEvents
-            });
-        }
+                })       
+        } 
     }
-    // createNewEvent(date) {
-    //      this.setState( (prevState) => {
-    //         console.log(date); 
-    //         var newEvents = prevState.events;
-    //         var newId = newEvents[newEvents.length-1].id + 1000;
-    //         newEvents.push({
-    //             id: newId,
-    //             title: '', 
-    //             type: '',
-    //             date: date
-    //         });
-    //         return Object.assign({}, prevState, newEvents)
-    //      });
-    //     // return newId;
-    // }
+
     getEventById(id) {
         var events = this.state.events;
+        console.log('id: ' + id);
         let type;
         // create new event
         if (id<0) {
              // default event type
           return {
-                id: id,
+                id: -1,
                 title: '', 
                 event_type_id: 0,
                 date: this.state.eventEditFormNewEventDate,
-                isNew: true
             };          
         }
         // existings event
         for (var i = 0; i<events.length; i++) {
             if (id == events[i].id) {
-                console.log(events[i]);
+                // console.log(events[i]);
                 return events[i]; 
             }
         };
@@ -252,6 +206,7 @@ class App extends React.Component {
                         onEventClick={this.toggleEventEditForm}
                     />
                     <MonthGrid
+                        date={this.state.date}
                         events={this.state.events}
                         onEventClick={this.toggleEventEditForm}
                     />

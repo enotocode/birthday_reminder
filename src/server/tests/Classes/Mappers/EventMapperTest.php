@@ -9,9 +9,9 @@ use PHPUnit\Framework\TestCase;
  */
 class EventMapperTest extends DatabaseTestCase {    
 
-    public function testFindAll(){
+    public function testGetAll(){
         $eventMapper = new EventMapper($this->getDbal());
-        $allEvents = $eventMapper->findAll(1); // UserId = 1
+        $allEvents = $eventMapper->getAll(1); // UserId = 1
         
         // Verify the number of books returned
         $this->assertCount(3, $allEvents);

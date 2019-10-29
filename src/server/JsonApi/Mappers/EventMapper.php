@@ -36,7 +36,8 @@ class EventMapper extends Mapper {
         $attributes = array(
             'date' => $class->getDate(),
             'title' => $class->getTitle(),
-            'description' => $class->getDescription()
+            'description' => $class->getDescription(),
+            'event_type_id' => $class->getEvent_type_id()
         );
         return $attributes;
     }

@@ -12,7 +12,7 @@ class EventController {
 
         //Get all events
         $eventMapper = new EventMapper($app['db']);
-        $events = $eventMapper->findAll(1);
+        $events = $eventMapper->getAll(1);
         
         // $events = json_encode($events);
         // $app['monolog']->notice($events); 
@@ -26,23 +26,35 @@ class EventController {
         foreach ($events as $e) {
             $data[]=$dataBuilder->build($e);
         }
-
-        $app['monolog']->notice(json_encode($data));
+        // $app['monolog']->notice(json_encode($data));
 
         return new JsonApiResponse($data);
     }
 
      public function saveEvent(Request $request, Application $app) {
 
+        global $log;
+
         //Get all events
         $eventMapper = new EventMapper($app['db']);
-        $event = new Event();
         $data = $request->request->all();
+        $event = null;
 
+        if ($data['id']>=0) {
+            $event = $eventMapper->getById($data['id']);
+            $log->notice(json_encode($event));
+        }
+        // update
+        if ($event) {
+            $eventMapper->update($data['id']);
+            return new JsonApiResponse($data['id']);
+        }
+
+        // save new event
+        $event = new Event();
         $event->setData($data);        
         $id = $eventMapper->insert($event);
-        $app['monolog']->notice($id);     
-        
+        $app['monolog']->notice($id); 
         return new JsonApiResponse($id);
     }
 }

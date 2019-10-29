@@ -8,10 +8,14 @@ class MonthGrid extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {           
-
+        this.state = {
             date: new Date()
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // Initialization state whem the form is showed
+        this.state.date = nextProps.date;       
     }
 
     createWeekRows( {year, month} ) {

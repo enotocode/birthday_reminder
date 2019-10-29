@@ -7,10 +7,8 @@ use Symfony\Component\HttpFoundation\Request;
 //use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-
 $app = new Silex\Application();
 $app['debug'] = true;
-
 
 // Providers
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
@@ -41,54 +39,74 @@ $app->register(new Silex\Provider\ValidatorServiceProvider(), array(
         'validator.userNameExists' => 'validator.userNameExists'
     )
 ));
-$app->register(new Silex\Provider\SessionServiceProvider());
+// $app->register(new Silex\Provider\SessionServiceProvider());
 
 
-$app->register(new Silex\Provider\SecurityServiceProvider(), array(
-    'security.firewalls' => array(
-        'admin' => array(
-            //'stateless' => true,
-            'pattern' => '^/admin',            
-            'anonym' => null,            
-            'form' => array(
-                'login_path' => '/', 
-                'check_path' => '/admin/login_check',
-                'require_previous_session' => false
-                ),
-            'logout' => array(
-                'logout_path' => '/admin/logout',
-                'target' => '/',
-                'invalidate_session' => true,
-                ),
-            'users' => function () use ($app) {
+// $app->register(new Silex\Provider\SecurityServiceProvider(), array(
+//     'security.firewalls' => array(
+//         'admin' => array(
+//             //'stateless' => true,
+//             'pattern' => '^/admin',            
+//             'anonym' => null,            
+//             'form' => array(
+//                 'login_path' => '/', 
+//                 'check_path' => '/admin/login_check',
+//                 'require_previous_session' => false
+//                 ),
+//             'logout' => array(
+//                 'logout_path' => '/admin/logout',
+//                 'target' => '/',
+//                 'invalidate_session' => true,
+//                 ),
+//             'users' => function () use ($app) {
+//                 return new UserProvider($app['db']);
+//             },
+//         ),
+//     ),
+//     'security.access_rules' => array(
+//         array('^/admin', 'ROLE_ADMIN', 'http'),
+//     ),
+//     'security.authentication.success_handler.admin' => function () use ($app) {
+//         return new CustomAuthenticationSuccessHandler(
+//                     $app['security.http_utils'],
+//                     array('login_path' => '/', 'check_path' => '/admin/login_check')
+//                 );
+//         },
+//     'security.authentication.failure_handler.admin' => function () use ($app) {
+//         return new CustomAuthenticationFailureHandler(
+//                     $app,
+//                     $app['security.http_utils'],
+//                     array('login_path' => '/', 'check_path' => '/admin/login_check'),
+//                     $app['logger']
+//                 );
+//         },            
+//     'security.authentication.logout_handler.admin' => function () {
+//         return new CustomLogoutSuccessHandler();
+//     }
+// ));
+
+$app['app.token_authenticator'] = function ($app) {
+    return new App\Security\TokenAuthenticator($app['security.encoder_factory']);
+};
+$app['security.firewalls'] = array(
+    'main' => array(
+        'guard' => array(
+            'authenticators' => array(
+                'app.token_authenticator'
+            ),
+
+            // Using more than 1 authenticator, you must specify
+            // which one is used as entry point.
+            // 'entry_point' => 'app.token_authenticator',
+        ),
+        // configure where your users come from. Hardcode them, or load them from somewhere
+        // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
+        'users' =>  function () use ($app) {
                 return new UserProvider($app['db']);
             },
-        ),
+        // 'anonymous' => true
     ),
-    'security.access_rules' => array(
-        array('^/admin', 'ROLE_ADMIN', 'http'),
-    ),
-    'security.authentication.success_handler.admin' => function () use ($app) {
-        return new CustomAuthenticationSuccessHandler(
-                    $app['security.http_utils'],
-                    array('login_path' => '/', 'check_path' => '/admin/login_check')
-                );
-        },
-    'security.authentication.failure_handler.admin' => function () use ($app) {
-        return new CustomAuthenticationFailureHandler(
-                    $app,
-                    $app['security.http_utils'],
-                    array('login_path' => '/', 'check_path' => '/admin/login_check'),
-                    $app['logger']
-                );
-        },            
-    'security.authentication.logout_handler.admin' => function () {
-        return new CustomLogoutSuccessHandler();
-    }
-));
-
-
-
+);
 
 // App Middleware
 $app->before(function (Request $request) {
@@ -117,6 +135,6 @@ $app->get('/login', function(Request $request) use ($app) {
     ));
 });
 
-$app->get('/admin/user', 'AuthenticationController::getUserInfo');
+$app->post('/admin/user', 'AuthenticationController::getUserInfo');
 
 $app->run();

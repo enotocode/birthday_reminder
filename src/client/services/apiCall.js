@@ -95,7 +95,7 @@ export function submitSingnInForm(inputs) {
     }
     formBody = formBody.join("&");
 
-    let url = '/admin/login_check';
+    let url = '/admin/user';
     let request = {
         method: 'POST',
         credentials: 'include',

@@ -42,8 +42,7 @@ class SignInFormWSComponent extends React.Component {
                 .catch(errors => {
                     this.setErrors(errors);
                     this.setState({ isSubmiting: false })
-                })
-                          
+                })                          
     }
     
     onInputChange(index, name, value) {
@@ -85,11 +84,11 @@ class SignInFormWSComponent extends React.Component {
 //        console.log(errors);
 //        this.setState({ statusBar: errors })
     }
-    
+    // // <Link to="/" className='modal-link'></Link>
     render() {
         return (
                 <div className='modal-bg'>
-                <Link to="/" className='modal-link'></Link>
+               
                 <form className='modal-form is-shadow-3'
                     onSubmit={(e) => {
                         e.preventDefault();

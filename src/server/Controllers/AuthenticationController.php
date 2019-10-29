@@ -18,6 +18,7 @@ class AuthenticationController {
            $name = $user->getName();
            $userInfo = array(
                'name' => $name,
+               'token'=>$token,
            );
            
            return $app->json($userInfo, 200);

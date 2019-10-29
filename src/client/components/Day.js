@@ -6,9 +6,13 @@ const Day = ({ day, onEventClick }) => {
         classNames=day.isCurrentDate ? classNames + ' label is-badge is-focus current-date' : classNames;
 
     return (
-            <div className="day">
-                <span onClick = {(e) => onEventClick(null, e, day)}
-                    className={'day-span' + classNames}>{day.date}
+            <div className="day" onClick = {
+                (e) => {                    
+                    if (e.target.className === 'day') {
+                        onEventClick(null, e, day)
+                    }                    
+                }}>
+                <span className={'day-span' + classNames}>{day.date}
                 </span>
                 {day.month ? <span className={'day-span' + classNames}>{day.month}</span> : ''}
                 {day.events.map( (event, i) =>  <Event 
