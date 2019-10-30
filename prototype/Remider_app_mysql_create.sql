@@ -7,7 +7,7 @@ CREATE TABLE `users` (
 	`name` varchar(80) NOT NULL,
 	`email` varchar(63) NOT NULL,
 	`pass_hash` varchar(255) NOT NULL,
-	`role` enum ('user', 'admin') NOT NULL,
+	`role` varchar(255) NOT NULL,
 	PRIMARY KEY (`id`)
 );
 
@@ -53,16 +53,16 @@ CREATE TABLE `reminders` (
 	PRIMARY KEY (`id`)
 );
 
-ALTER TABLE `events` ADD CONSTRAINT `events_fk0` FOREIGN KEY (`event_type_id`) REFERENCES `event_types`(`id`);
+-- ALTER TABLE `events` ADD CONSTRAINT `events_fk0` FOREIGN KEY (`event_type_id`) REFERENCES `event_types`(`id`);
 
-ALTER TABLE `events` ADD CONSTRAINT `events_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+-- ALTER TABLE `events` ADD CONSTRAINT `events_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
-ALTER TABLE `event_to_participant` ADD CONSTRAINT `event_to_participant_fk0` FOREIGN KEY (`event_id`) REFERENCES `events`(`id`);
+-- ALTER TABLE `event_to_participant` ADD CONSTRAINT `event_to_participant_fk0` FOREIGN KEY (`event_id`) REFERENCES `events`(`id`);
 
-ALTER TABLE `event_to_participant` ADD CONSTRAINT `event_to_participant_fk1` FOREIGN KEY (`participant_id`) REFERENCES `participants`(`id`);
+-- ALTER TABLE `event_to_participant` ADD CONSTRAINT `event_to_participant_fk1` FOREIGN KEY (`participant_id`) REFERENCES `participants`(`id`);
 
-ALTER TABLE `reminders` ADD CONSTRAINT `reminders_fk0` FOREIGN KEY (`event_id`) REFERENCES `event`(`id`);
+-- ALTER TABLE `reminders` ADD CONSTRAINT `reminders_fk0` FOREIGN KEY (`event_id`) REFERENCES `event`(`id`);
 
-ALTER TABLE `event_types` ADD CONSTRAINT `event_types_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+-- ALTER TABLE `event_types` ADD CONSTRAINT `event_types_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
-ALTER TABLE `participants` ADD CONSTRAINT `participants_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+-- ALTER TABLE `participants` ADD CONSTRAINT `participants_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);

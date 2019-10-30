@@ -2,9 +2,16 @@
 INSERT INTO users VALUES (
     NULL,
     'admin',
-    'hunnter@gmail.com',
+    'enotocode@yandex.ru',
     '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a',
-    'admin'
+    'ROLE_ADMIN'
+);
+INSERT INTO users VALUES (
+    NULL,
+    'demo',
+    'demo@demo.ru',
+    '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a',
+    'ROLE_DEMO'
 );
 /* Add event type */
 INSERT INTO event_types VALUES (
