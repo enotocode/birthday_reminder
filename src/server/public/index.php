@@ -102,6 +102,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
                 // which one is used as entry point.
                 // 'entry_point' => 'app.token_authenticator',
             ),
+            'pattern' => '^/api',
             // configure where your users come from. Hardcode them, or load them from somewhere
             // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
             'users' =>  function () use ($app) {
@@ -116,6 +117,9 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
         ),
 )));
 
+$app['security.access_rules'] = array(
+array('^/api/save_event', 'ROLE_ADMIN'),
+);
 
 // $app['security.firewalls'] = array(
 //     'main' => array(
@@ -155,13 +159,13 @@ $app->before(function (Request $request) {
 $app->get('/', function () use ($app) {
     return $app['twig']->render('index.html.twig');
 });
-//$app->post('/signin', 'DefaultController::adminAction');
-$app->post('/signup', 'SignupController::Signup');
-$app->post('/validate', 'ValidateController::validate');
-$app->get('/admin', 'DefaultController::adminAction');
-$app->get('/signin', 'FormLoginController::sendLoginErrors');
-$app->get('/events', 'EventController::getAllEvents');
-$app->post('/save_event', 'EventController::saveEvent');
+// $app->post('/signin', 'DefaultController::adminAction');
+// $app->post('/api/signup', 'SignupController::Signup');
+// $app->post('/api/validate', 'ValidateController::validate');
+// $app->get('/api/user', 'DefaultController::adminAction');
+// $app->get('/signin', 'FormLoginController::sendLoginErrors');
+$app->get('/api/get_events', 'EventController::getAllEvents');
+$app->post('/api/save_event', 'EventController::saveEvent');
 
 $app->get('/login', function(Request $request) use ($app) {
     return $app['twig']->render('login.html.twig', array(
@@ -173,3 +177,9 @@ $app->get('/login', function(Request $request) use ($app) {
 $app->post('/admin/user', 'AuthenticationController::getUserInfo');
 
 $app->run();
+
+// curl -I -H 'X-AUTH-TOKEN: demo:foo' http://reminder.com/api/get_events
+// curl -I -X POST -H 'X-AUTH-TOKEN: demo:foo' http://reminder.com/api/save_event
+
+// curl -I -H 'X-AUTH-TOKEN: admin:foo' http://reminder.com/api/get_events
+// curl -I -X POST -H 'X-AUTH-TOKEN: admin:foo' http://reminder.com/api/save_event

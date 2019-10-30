@@ -1,4 +1,5 @@
 import JsonApiError from '../Errors/JsonApiError';
+import AuthenticationError from '../Errors/AuthenticationError';
 
 
 ////import {SUBMIT} from '../Login/actions';
@@ -25,6 +26,14 @@ import JsonApiError from '../Errors/JsonApiError';
 
 function sendRequest(url, request) {
 
+    // get X-AUTH-TOKEN from sessionStorage
+    let token = sessionStorage.getItem('X-AUTH-TOKEN');
+    if (!token) token = 'demo:foo';
+
+    // set X-AUTH-TOKEN header
+    if (!request.headers) request.headers={};
+    request.headers['X-AUTH-TOKEN']=token;
+
     return handleResponse(
             fetch(url, request)
             .then(response => Promise.all([ response, response.json() ]))
@@ -37,7 +46,10 @@ function handleResponse(promise) {
     return promise.then(([ response, json ]) => { 
                         // status = 2xx
                         if (response.ok) {
-                            return json;                        
+                            return json; 
+                        // forbiden (dont have access)
+                        } else if (response.status==403)  {
+                            return new AuthenticationError(json);                
                         } else {
                             // Transforming JsonApi response in internal entitie
                             // Server response contains Error property
@@ -132,7 +144,7 @@ export function requestLogout() {
 }
 
 export function saveEvent(event) {
-    let url = '/save_event';
+    let url = 'api/save_event';
     let request = {
         method: 'POST',
         headers: {'Content-type': 'application/json'},
@@ -142,7 +154,7 @@ export function saveEvent(event) {
 }
 
 export function getAllEvents() {
-        let url = '/events';
+        let url = 'api/get_events';
     let request = {
         method: 'GET',
         credentials: 'include',
