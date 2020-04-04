@@ -12,11 +12,11 @@ abstract class Mapper {
         }
     }
     
-    public function getById($id) {
+    public function getById($event_id) {
 
         global $log;
         
-        $stmt = self::$dbal->executeQuery($this->getByIdStm, array($id));
+        $stmt = self::$dbal->executeQuery($this->getByIdStm, array($event_id));
         $array = $stmt->fetchAll();
 
         $log->notice("getById: " . json_encode($array));
@@ -33,23 +33,23 @@ abstract class Mapper {
     }
     /**
      * 
-     * @param {numeric} $id - User_id in case finding Event or Event_id in case finding Reminders
+     * @param {numeric} $user_id - User_id 
      * @return type
      * @throws Exception
      */   
-    public function getAll($id = NULL) {
+    public function getAll($user_id = NULL) {
 
         global $log;
         
-        if ($id === NULL) {
-            throw new Exception('"getAll()" method must be call with $id argument');
+        if ($user_id === NULL) {
+            throw new Exception('"getAll()" method must be call with $user_id argument');
         }
         
-        if ( ! is_numeric($id) ) {
-            throw new Exception('Argument $id must be number, given: ' . $id);
+        if ( ! is_numeric($user_id) ) {
+            throw new Exception('Argument $user_id must be number, given: ' . $user_id);
         }
         
-        $stmt = self::$dbal->executeQuery($this->getAllStm, array($id));
+        $stmt = self::$dbal->executeQuery($this->getAllStm, array($user_id));
         $array = $stmt->fetchAll();
         
         if ( empty($array) ) {
