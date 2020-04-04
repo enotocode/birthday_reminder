@@ -12,17 +12,17 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 $app = new Silex\Application();
 $app['debug'] = true;
 
-// Providers
-$app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path' => __DIR__ . '/../Templates',
-));
-$app->register(new Silex\Provider\ValidatorServiceProvider());
-
 // logs
 $app->register(new Silex\Provider\MonologServiceProvider(), array(
     'monolog.logfile' => __DIR__.'/../Logs/development.log',
 ));
-$log = $app['monolog'];  
+$log = $app['monolog'];
+
+// Providers
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
+    'twig.path' => __DIR__ . '/../Templates',
+));
+$app->register(new Silex\Provider\ValidatorServiceProvider());  
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
@@ -118,7 +118,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 )));
 
 $app['security.access_rules'] = array(
-array('^/api/save_event', 'ROLE_ADMIN'),
+array('^/api/save_event', 'ROLE_DEMO'),
 );
 
 // $app['security.firewalls'] = array(

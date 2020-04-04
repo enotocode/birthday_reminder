@@ -141,16 +141,16 @@ class App extends React.Component {
                         // replace old event whith new event in events[]
                         if (event.id === id) return newEvent;
                         return { events: newEvents }
-                    });  
-                }
+                    });
+                })   
             }
             this.saveEvent(newEvent);                
         } 
     }
 
     // Send event to api
-    saveEvent(Event) {
-        .then((response) => {
+    saveEvent(Event) {        
+        saveEvent(Event).then((response) => {
         // replace id from api
             if (newEvent.id < 0) {                        
                 this.setState( prevState => {
