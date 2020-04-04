@@ -112,38 +112,57 @@ class App extends React.Component {
             eventEditFormNewEventDate: newEventDate
         }});
     }
+
     editEvent(newEvent, edited) {
         // console.log(edited);
         // console.log(newEvent.id);
+
         // save edited event in db
         if(edited) {
-            saveEvent(newEvent)
-                .then((response) => {
-                // new event
-                    if (newEvent.id < 0) {                        
-                        this.setState( prevState => {
-                            newEvent.id = response.id;
-                            var newEvents = this.state.events.concat(newEvent);
-                            return { events: newEvents }
-                        });
-                    } else {
-                // existens event
-                        var id = newEvent.id;
-                        // var key;
-                        var newEvents = this.state.events.map( (event, i) => {
-                            // replace old event whith new event in events[]
-                            if (event.id === id) return newEvent;
-                            return event;
-                        });
-                        this.setState({
-                            events: newEvents
-                        });   
-                    }
-                })
-                .catch(errors => {
-                    console.log(errors);
-                })       
+
+        // Need to save an Event in the state first, 
+        // than send it to an api
+            // show login form
+                // repeat request
+        // after all set new id to the Event in the state
+
+            // add new event
+            if (newEvent.id < 0) {                        
+                this.setState( prevState => {                
+                    var newEvents = prevState.events.concat(newEvent);
+                    return { events: newEvents }
+                });
+            } else {
+            // edit existens event
+                this.setState( prevState => {                
+                    var id = newEvent.id;
+                    // var key;
+                    var newEvents = prevState.map( (event, i) => {
+                        // replace old event whith new event in events[]
+                        if (event.id === id) return newEvent;
+                        return { events: newEvents }
+                    });  
+                }
+            }
+            this.saveEvent(newEvent);                
         } 
+    }
+
+    // Send event to api
+    saveEvent(Event) {
+        .then((response) => {
+        // replace id from api
+            if (newEvent.id < 0) {                        
+                this.setState( prevState => {
+                    newEvent.id = response.id;
+                    var newEvents = prevState.concat(newEvent);
+                    return { events: newEvents }
+                });
+            }
+        })
+        .catch(errors => {
+            console.log(errors);
+        })       
     }
 
     getEventById(id) {

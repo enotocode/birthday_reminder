@@ -2,9 +2,16 @@
 INSERT INTO users VALUES (
     NULL,
     'admin',
-    'hunnter@gmail.com',
+    'enotocode@yandex.ru',
     '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a',
-    'admin'
+    'ROLE_ADMIN'
+);
+INSERT INTO users VALUES (
+    NULL,
+    'demo',
+    'demo@demo.ru',
+    '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a',
+    'ROLE_DEMO'
 );
 /* Add event type */
 INSERT INTO event_types VALUES (
@@ -20,6 +27,14 @@ INSERT INTO event_types VALUES (
     'WEDDING',
     0,
     'A wedding is a ceremony where two people or a couple are united in marriage.',
+    1
+);
+/* Add event type */
+INSERT INTO event_types VALUES (
+    NULL,
+    'HOLIDAY',
+    2,
+    'Just another holiday',
     1
 );
 /* Add event */
