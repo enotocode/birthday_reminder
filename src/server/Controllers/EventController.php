@@ -35,26 +35,32 @@ class EventController {
 
         global $log;
 
-        //Get all events
+        // Get event's data
         $eventMapper = new EventMapper($app['db']);
         $data = $request->request->all();
         $event = null;
 
+        // finding event by id
         if ($data['id']>=0) {
-            $event = $eventMapper->getById($data['id']);
-            $log->notice(json_encode($event));
+            $log->notice('finding event by id=' . $data['id']);
+            $event = $eventMapper->getById($data['id']);            
         }
+
         // update
         if ($event) {
-            $eventMapper->update($data['id']);
+            $log->notice('Event found: ' . json_encode($eventMapper->getData($event)));
+            $log->notice('updating event');
+            $eventMapper->update($event, $data);
             return new JsonApiResponse($data['id']);
         }
+
+        $log->notice('Could not found event!');
 
         // save new event
         $event = new Event();
         $event->setData($data);        
         $id = $eventMapper->insert($event);
-        $app['monolog']->notice($id); 
+        $app['monolog']->notice("Save new event with id=$id"); 
         return new JsonApiResponse($id);
     }
 }

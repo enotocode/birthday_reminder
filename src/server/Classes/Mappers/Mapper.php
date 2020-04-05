@@ -15,17 +15,24 @@ abstract class Mapper {
     public function getById($event_id) {
 
         global $log;
-        
-        $stmt = self::$dbal->executeQuery($this->getByIdStm, array($event_id));
-        $array = $stmt->fetchAll();
 
-        $log->notice("getById: " . json_encode($array));
+        $log->notice("getById: " . $event_id);
+        $array = self::$dbal->fetchAssoc($this->getByIdStm, array($event_id));        
         
-        if ( !is_array($array) || !empty($array) ) {
-            // throw new Exception('Could not find Event by id: ' . $id);
-            $log->notice("check: " . is_array($array) . ':' . isset($array['id']));
+        if ( 
+            !is_array($array) || 
+            empty($array) ||
+            !array_key_exists('id', $array)
+        ) {
+            $log->notice('Could not find Event by id: ' . $id);
+            $log->notice(
+                "checks: !is_array= " . !is_array($array) . 
+                '; empty=' . empty($array) . 
+                '; !array_key_exists=' . !array_key_exists('id', $array)
+            );
             return false;
         }
+        $log->notice(json_encode($array));
         
         $event = static::createObject($array);         
         
@@ -61,14 +68,14 @@ abstract class Mapper {
         return $this->getCollection($array);        
     }
     
-    public function getCollection(Array $raws) {        
+    public function getCollection(Array $array) {        
     
-        if ( empty($raws) ) {
-            throw new Exception('Argument $raws must be not empty');
+        if ( empty($array) ) {
+            throw new Exception('Argument $array must be not empty');
         }
         
         $collection = [];        
-        foreach ($raws as $data) {
+        foreach ($array as $data) {
             $collection[] = $this->createObject($data);
         }
         

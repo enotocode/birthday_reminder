@@ -127,21 +127,25 @@ class App extends React.Component {
         // after all set new id to the Event in the state
 
             // add new event
-            if (newEvent.id < 0) {                        
+            if (newEvent.id < 0) { 
+                console.log("add new event");                       
                 this.setState( prevState => {                
                     var newEvents = prevState.events.concat(newEvent);
                     return { events: newEvents }
                 });
             } else {
-            // edit existens event
+            // edit existing event
+                console.log("edit existing event"); 
                 this.setState( prevState => {                
                     var id = newEvent.id;
                     // var key;
-                    var newEvents = prevState.map( (event, i) => {
+                    var newEvents = prevState.events.map( (event, i) => {
                         // replace old event whith new event in events[]
+                        console.log("old event id="+event.id+" new event id="+id); 
                         if (event.id === id) return newEvent;
-                        return { events: newEvents }
+                        return event;
                     });
+                    return { events: newEvents }
                 })   
             }
             this.saveEvent(newEvent);                
@@ -149,16 +153,29 @@ class App extends React.Component {
     }
 
     // Send event to api
-    saveEvent(Event) {        
-        saveEvent(Event).then((response) => {
-        // replace id from api
+    saveEvent(newEvent) {        
+        saveEvent(newEvent).then((response) => {
+        // update id in state
+         console.log("update id in state"); 
+            this.setState( prevState => {                
+                newEvent.id = response.data;
+                var newEvents = prevState.events.map( (event, i) => {
+                    // replace old event whith new event in events[]
+                    if (event.id === -1) return newEvent;
+                    return event;
+                });
+                return { events: newEvents }
+            })  
+
+            /*
             if (newEvent.id < 0) {                        
                 this.setState( prevState => {
-                    newEvent.id = response.id;
-                    var newEvents = prevState.concat(newEvent);
+                    newEvent.id = response.data;
+                    var newEvents = prevState.events.concat(newEvent);
                     return { events: newEvents }
                 });
-            }
+            }*/
+
         })
         .catch(errors => {
             console.log(errors);
