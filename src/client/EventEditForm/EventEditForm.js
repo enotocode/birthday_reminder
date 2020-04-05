@@ -221,12 +221,13 @@ class EventEditForm extends React.Component {
                                             button = {this.state.status.submitFailed}
                                             /> : "" }                
                     </form>
-                        <Button                           
+                        <Button  
+                            /*text='Delete'*/                         
                             onClick = {this.props.onDelete}
                             isDisabled={this.state.status.isDisabled}
                             isSubmiting={this.state.status.isSubmiting}
                             secondary ='secondary'
-                            icon='icon icon-bin'
+                            icon='icon icon-bin' 
                         />
                         <Button
                             text='Cancel'

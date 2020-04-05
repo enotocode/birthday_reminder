@@ -61,6 +61,7 @@ class App extends React.Component {
         };        
         
         this.toggleEventEditForm = this.toggleEventEditForm.bind(this);
+        this.closeEventEditForm = this.closeEventEditForm.bind(this);
         this.editEvent = this.editEvent.bind(this);
         this.getEventById = this.getEventById.bind(this);
         this.nextMonth = this.nextMonth.bind(this);
@@ -113,6 +114,12 @@ class App extends React.Component {
         }});
     }
 
+    closeEventEditForm() { 
+        this.setState( (prevState) => {
+            return {eventEditFormShow: false};
+        });
+    }
+
     editEvent(newEvent, edited) {
         // console.log(edited);
         // console.log(newEvent.id);
@@ -148,12 +155,12 @@ class App extends React.Component {
                     return { events: newEvents }
                 })   
             }
-            this.saveEvent(newEvent);                
+            this.saveEvent(newEvent, this.closeEventEditForm);                
         } 
     }
 
     // Send event to api
-    saveEvent(newEvent) {        
+    saveEvent(newEvent, callback) {  
         saveEvent(newEvent).then((response) => {
         // update id in state
          console.log("update id in state"); 
@@ -175,6 +182,12 @@ class App extends React.Component {
                     return { events: newEvents }
                 });
             }*/
+            console.log('checking callbak...');
+            console.log(typeof callback);
+            if (typeof callback === "function") {
+                console.log('execution callbak...');
+                callback();
+            }
 
         })
         .catch(errors => {
