@@ -21,7 +21,7 @@ class EventList extends React.Component {
                         
                 {groups.remaingEvents ? <h5 className="is-muted is-small">In this year</h5> : ''} 
                 {groups.remaingEvents ? this.mapEvents(groups.remaingEvents, props) : ''} 
-            </div>
+            </div>//
         )
     }
     
@@ -40,7 +40,7 @@ class EventList extends React.Component {
                     onEventClick = {onEventClick}
                     classNames=''
                 /> )}
-            </div>
+            </div>//
         )
     }
     

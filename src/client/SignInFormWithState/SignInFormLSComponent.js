@@ -104,21 +104,25 @@ class SignInFormWSComponent extends React.Component {
 
 	setErrors(error) {
 		console.log(error);
-		this.setState({ statusBar: error.message })
+		let id = new Date().getTime()+'_'+Math.random();
+		this.setState({ 
+			statusBar: error.message,
+			statusBarMsgId: id
+			})
 	}
 	// // <Link to="/" className='modal-link'></Link>
 	render() {
 		return (
 				<div className='modal-bg'>
 			   
-				<form className='modal-form is-shadow-3'
-					onSubmit={(e) => {
-						e.preventDefault();
-						this.onSubmit()
-							}}> 
-				<Link to="/"><span className="close button-right"></span></Link>			  
-					<h2>Sign In</h2>
-					
+					<form className='modal-form is-shadow-3'
+						onSubmit={(e) => {
+							e.preventDefault();
+							this.onSubmit()
+						}}> 
+						<Link to="/"><span className="close button-right"></span></Link>			  
+						<h2>Sign In</h2>
+						
 						{this.state.inputs.map((input, index) => (
 											<div 
 												className="form-item"
@@ -144,26 +148,28 @@ class SignInFormWSComponent extends React.Component {
 													{input.errorMessage}
 												</span>				
 											</div>
-											))}
-					<div className="form-item flex-center">
-						<Button
-						type='submit'
-						text='Sign in!'
-						isDisabled={this.state.status.isDisabled}
-						isSubmiting={this.state.status.isSubmiting}
-						/>
-						{ this.state.status.submitFailed || this.state.statusBar ?
-										<FormStatusBar					
-											message = {this.state.statusBar}
-											onRetry = {() => onSubmit(this.state.inputs)}
-											button = {this.state.status.submitFailed}
-											/> : "" }	 
+						))}
+
+						<div className="form-item flex-center">
+							<Button
+							type='submit'
+							text='Sign in!'
+							isDisabled={this.state.status.isDisabled}
+							isSubmiting={this.state.status.isSubmiting}
+							/>
+						
+						<FormStatusBar					
+							message = {this.state.statusBar}
+							messageId = {this.state.statusBarMsgId}
+							onRetry = {() => onSubmit(this.state.inputs)}
+							button = {this.state.status.submitFailed}
+							/> 
+												
 						<Link to="/signup" className='is-push-right'>Have an account?</Link>
-					</div>				 
-			   
+					</div>
 				</form>
-				</div>
-					)
+			</div>
+		)
 	}
 }
 
