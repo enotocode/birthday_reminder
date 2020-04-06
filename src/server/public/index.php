@@ -174,7 +174,7 @@ $app->get('/login', function(Request $request) use ($app) {
     ));
 });
 
-$app->post('/admin/user', 'AuthenticationController::getUserInfo');
+$app->post('/admin/user', 'AuthenticationController::SignIn');
 
 $app->run();
 
