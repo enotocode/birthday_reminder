@@ -1,5 +1,6 @@
 import JsonApiError from '../Errors/JsonApiError';
 import AuthenticationError from '../Errors/AuthenticationError';
+import ServerError from '../Errors/ServerError';
 
 
 ////import {SUBMIT} from '../Login/actions';
@@ -36,33 +37,52 @@ function sendRequest(url, request) {
 
     return handleResponse(
             fetch(url, request)
-            .then(response => Promise.all([ response, response.json() ]))
+            //.then(response => Promise.all([ response, response.json() ]))
             
     );
 }
 
 function handleResponse(promise) {
     console.log(promise)
-    return promise.then(([ response, json ]) => { 
+    // return promise.then(([ response, json ]) => { 
+    return promise.then((response) => { 
                         // status = 2xx
+                        //console.log(response);
                         if (response.ok) {
-                            return json; 
+                            var json;
+                            try{
+                               json = response.json(); 
+                            } catch(error){
+                                // cant parse json content
+                                throw new Error(error);
+                            }
+                            return json;
                         // forbiden (dont have access)
                         } else if (response.status==403)  {
-                            return new AuthenticationError(json);                
-                        } else {
-                            // Transforming JsonApi response in internal entitie
-                            // Server response contains Error property
+                            return new AuthenticationError(json); 
+                        // all other errors (5xx, 4xx, etc)    
+                        } else  {
+                            console.log("ERROR: all other errors (5xx, 4xx, etc)");
+
+                            throw new ServerError(response);  
+                        }            
+                        // } else {
+                        //     // Transforming JsonApi response in internal entitie
+                        //     // Server response contains Error property
                             
-                            throw new JsonApiError(json);
-                        }
+                        //     throw new JsonApiError(json);
+                        // }
                     }
-            ).catch(error => {
+            ).catch((error) => {
+                
+                    console.log("ERROR: in apiCall/handleResponse");
+                    // console.log(response);
+
                    // SyntaxError in response.json()
                    // Network error
                    // Fetch() error
                    // Server response with errors object
-                   throw error;
+                   throw error
                 }
             );
 }
@@ -97,7 +117,7 @@ export function submitSingnUpForm(inputs) {
     return (sendRequest(url, request))
 }
 
-export function submitSingnInForm(inputs) {
+export function getToken(inputs) {
     
     var formBody = [];
     for (var property in inputs) {
