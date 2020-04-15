@@ -2,6 +2,9 @@
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use JsonApi\JsonApiResponse;
+use JsonApi\DataBuilder;
 
 /**
  * Description of AuthenticationController
@@ -10,20 +13,25 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AuthenticationController {
 	
-	public function SignIn(Request $request, Application $app) {
+	public function signIn(Request $request, Application $app) {
 
 		global $log;
 
-		$credentials = $app['app.token_authenticator']->getCredentials($request);
+		$credentials = $app['app.password_authenticator']->getCredentials($request);
 		$log->notice("credentials: " . json_encode($credentials));
 		
-		$user 		 = $app['app.token_authenticator']->getUser($credentials, new UserProvider($app['db']));
+		$user 		 = $app['app.password_authenticator']->getUser($credentials, new UserProvider($app['db']));
 		$log->notice("user: " . json_encode($user));
 		
-		$success 	 = $app['app.token_authenticator']->checkCredentials($credentials, $user);
+		$success 	 = $app['app.password_authenticator']->checkCredentials($credentials, $user);
 		$log->notice("success: " . json_encode($success));
 
-		return $success;
+		if ($success) { // on success, return token
+			$data = array(
+				'token' => 'demo:foo'
+			);
+			return new JsonApiResponse($data);
+		}
 
 		// if ($app['security.authorization_checker']->isGranted('IS_AUTHENTICATED_FULLY')) {
 		   

@@ -12,7 +12,7 @@ import MyLink from '../components/MyLink';
 
 
 //import {submitSingnInForm} from '../services/apiCall';
-import {refreshToken} from '../services/authentication';
+import {checkAuth} from '../services/authentication';
 import initialState from './initialState';	  
 
 class SignInFormWSComponent extends React.Component { 
@@ -28,14 +28,14 @@ class SignInFormWSComponent extends React.Component {
 	
 	onSubmit() {
 		let inputs = this.state.inputs;
-		let inputsValues = {};
-		inputs.forEach(function (input) {
-			inputsValues[input.name] = input.value;
-		});	
+		// let inputsValues = {};
+		// inputs.forEach(function (input) {
+		// 	inputsValues[input.name] = input.value;
+		// });	
 
 		this.setState({ statusBar: 'Form is submiting...' });
 
-		refreshToken(inputsValues)
+		checkAuth(inputs[0].value, inputs[1].value)
 			.then((response) => {
 				console.log("Response is ok!");
 				this.handleResponse(response);

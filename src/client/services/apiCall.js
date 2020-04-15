@@ -1,6 +1,7 @@
 import JsonApiError from '../Errors/JsonApiError';
 import AuthenticationError from '../Errors/AuthenticationError';
 import ServerError from '../Errors/ServerError';
+import {getToken} from './authentication';
 
 
 ////import {SUBMIT} from '../Login/actions';
@@ -28,8 +29,9 @@ import ServerError from '../Errors/ServerError';
 function sendRequest(url, request) {
 
     // get X-AUTH-TOKEN from sessionStorage
-    let token = sessionStorage.getItem('X-AUTH-TOKEN');
-    if (!token) token = 'demo:foo';
+    // let token = sessionStorage.getItem('X-AUTH-TOKEN');
+    let token = getToken();
+    //if (!token) token = 'demo:foo1';
 
     // set X-AUTH-TOKEN header
     if (!request.headers) request.headers={};
@@ -117,26 +119,49 @@ export function submitSingnUpForm(inputs) {
     return (sendRequest(url, request))
 }
 
-export function getToken(inputs) {
+// export function getToken(inputs) {
     
-    var formBody = [];
-    for (var property in inputs) {
-        var encodedKey = encodeURIComponent(property);
-        var encodedValue = encodeURIComponent(inputs[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
+//     var formBody = [];
+//     for (var property in inputs) {
+//         var encodedKey = encodeURIComponent(property);
+//         var encodedValue = encodeURIComponent(inputs[property]);
+//         formBody.push(encodedKey + "=" + encodedValue);
+//     }
+//     formBody = formBody.join("&");
 
-    let url = '/admin/user';
+//     let url = '/admin/user';
+//     let request = {
+//         method: 'POST',
+//         credentials: 'include',
+//         headers: {
+//             'Accept': 'text/html, application/xhtml',
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//             'X-Requested-With': 'XMLHttpRequest'
+//           },
+//         body: formBody
+//     };
+
+//     return (sendRequest(url, request))
+// }
+
+// Send token to authentication url
+export function requestCheckAuth(data) {
+    
+    // var formBody = [];
+    // for (var property in data) {
+    //     var encodedKey = encodeURIComponent(property);
+    //     var encodedValue = encodeURIComponent(data[property]);
+    //     formBody.push(encodedKey + "=" + encodedValue);
+    // }
+    // formBody = formBody.join("&");
+
+    // let url = '/admin/user';
+    let url = '/signin';
     let request = {
         method: 'POST',
-        credentials: 'include',
-        headers: {
-            'Accept': 'text/html, application/xhtml',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-          },
-        body: formBody
+        credentials: 'include', //?
+        headers: {'Content-type': 'application/json'},
+        body:  JSON.stringify({_username:'demo', _password:'foo'})
     };
 
     return (sendRequest(url, request))

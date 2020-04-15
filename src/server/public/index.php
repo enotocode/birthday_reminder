@@ -14,150 +14,179 @@ $app['debug'] = true;
 
 // logs
 $app->register(new Silex\Provider\MonologServiceProvider(), array(
-    'monolog.logfile' => __DIR__.'/../Logs/development.log',
+	'monolog.logfile' => __DIR__.'/../Logs/development.log',
 ));
 $log = $app['monolog'];
 
 // Providers
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path' => __DIR__ . '/../Templates',
+	'twig.path' => __DIR__ . '/../Templates',
 ));
 $app->register(new Silex\Provider\ValidatorServiceProvider());  
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
-    'db.options' => array(
-        'driver'   => 'pdo_mysql',
-        'dbname'   => 'birthday_reminder',
-        'user'     => 'root', //'reminder_app',
-        'password' => 'masterkey',//'12345',
-        'host'     => 'localhost',
-        'charset'  => 'UTF8'
-    ),
+	'db.options' => array(
+		'driver'   => 'pdo_mysql',
+		'dbname'   => 'birthday_reminder',
+		'user'	 => 'root', //'reminder_app',
+		'password' => 'masterkey',//'12345',
+		'host'	 => 'localhost',
+		'charset'  => 'UTF8'
+	),
 ));
 $app->register(new CustomValidationServiceProvider());
 $app->register(new Silex\Provider\ValidatorServiceProvider(), array(
-    'validator.validator_service_ids' => array(
-        'validator.emailExists' => 'validator.emailExists',
-        'validator.userNameExists' => 'validator.userNameExists'
-    )
+	'validator.validator_service_ids' => array(
+		'validator.emailExists' => 'validator.emailExists',
+		'validator.userNameExists' => 'validator.userNameExists'
+	)
 ));
 $app->register(new Silex\Provider\SessionServiceProvider());
 
 
 // $app->register(new Silex\Provider\SecurityServiceProvider(), array(
-//     'security.firewalls' => array(
-//         'admin' => array(
-//             //'stateless' => true,
-//             'pattern' => '^/admin',            
-//             'anonym' => null,            
-//             'form' => array(
-//                 'login_path' => '/', 
-//                 'check_path' => '/admin/login_check',
-//                 'require_previous_session' => false
-//                 ),
-//             'logout' => array(
-//                 'logout_path' => '/admin/logout',
-//                 'target' => '/',
-//                 'invalidate_session' => true,
-//                 ),
-//             'users' => function () use ($app) {
-//                 return new UserProvider($app['db']);
-//             },
-//         ),
-//     ),
-//     'security.access_rules' => array(
-//         array('^/admin', 'ROLE_ADMIN', 'http'),
-//     ),
-//     'security.authentication.success_handler.admin' => function () use ($app) {
-//         return new CustomAuthenticationSuccessHandler(
-//                     $app['security.http_utils'],
-//                     array('login_path' => '/', 'check_path' => '/admin/login_check')
-//                 );
-//         },
-//     'security.authentication.failure_handler.admin' => function () use ($app) {
-//         return new CustomAuthenticationFailureHandler(
-//                     $app,
-//                     $app['security.http_utils'],
-//                     array('login_path' => '/', 'check_path' => '/admin/login_check'),
-//                     $app['logger']
-//                 );
-//         },            
-//     'security.authentication.logout_handler.admin' => function () {
-//         return new CustomLogoutSuccessHandler();
-//     }
+//	 'security.firewalls' => array(
+//		 'admin' => array(
+//			 //'stateless' => true,
+//			 'pattern' => '^/admin',			
+//			 'anonym' => null,			
+//			 'form' => array(
+//				 'login_path' => '/', 
+//				 'check_path' => '/admin/login_check',
+//				 'require_previous_session' => false
+//				 ),
+//			 'logout' => array(
+//				 'logout_path' => '/admin/logout',
+//				 'target' => '/',
+//				 'invalidate_session' => true,
+//				 ),
+//			 'users' => function () use ($app) {
+//				 return new UserProvider($app['db']);
+//			 },
+//		 ),
+//	 ),
+//	 'security.access_rules' => array(
+//		 array('^/admin', 'ROLE_ADMIN', 'http'),
+//	 ),
+//	 'security.authentication.success_handler.admin' => function () use ($app) {
+//		 return new CustomAuthenticationSuccessHandler(
+//					 $app['security.http_utils'],
+//					 array('login_path' => '/', 'check_path' => '/admin/login_check')
+//				 );
+//		 },
+//	 'security.authentication.failure_handler.admin' => function () use ($app) {
+//		 return new CustomAuthenticationFailureHandler(
+//					 $app,
+//					 $app['security.http_utils'],
+//					 array('login_path' => '/', 'check_path' => '/admin/login_check'),
+//					 $app['logger']
+//				 );
+//		 },			
+//	 'security.authentication.logout_handler.admin' => function () {
+//		 return new CustomLogoutSuccessHandler();
+//	 }
 // ));
 
 $app['app.token_authenticator'] = function ($app) {
-    return new TokenAuthenticator($app['security.encoder_factory']);
+	return new TokenAuthenticator($app['security.encoder_factory']);
+};
+$app['app.password_authenticator'] = function ($app) {
+	return new PasswordAuthenticator($app['security.encoder_factory']);
 };
 
+
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
-    'security.firewalls' => array(
-        'main' => array(
-            'guard' => array(
-                'authenticators' => array(
-                    'app.token_authenticator'
-                ),
-                // Using more than 1 authenticator, you must specify
-                // which one is used as entry point.
-                // 'entry_point' => 'app.token_authenticator',
-            ),
-            'pattern' => '^/api',
-            // configure where your users come from. Hardcode them, or load them from somewhere
-            // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
-            'users' =>  function () use ($app) {
-                    return new UserProvider($app['db']);
-                },
-            // 'anonymous' => true
-            // 'users' => array(
-            // //raw password = foo
-            //     'test' => array('ROLE_USER', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
-            // ),
+	'security.firewalls' => array(
+		'api' => array(
+			'guard' => array(
+				'authenticators' => array(
+					'app.token_authenticator',
+				),
+				// Using more than 1 authenticator, you must specify
+				// which one is used as entry point.
+				// 'entry_point' => 'app.token_authenticator',
+			),
+			'pattern' => '^/api',
+			// configure where your users come from. Hardcode them, or load them from somewhere
+			// https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
+			'users' =>  function () use ($app) {
+					return new UserProvider($app['db']);
+				},
+			// 'anonymous' => true
+			// 'users' => array(
+			// //raw password = foo
+			//	 'test' => array('ROLE_USER', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
+			// ),
 
-        ),
-)));
+		),
+		// 'default' => array(
+		// 	'guard' => array(
+		// 		'authenticators' => array(
+		// 			'app.password_authenticator'
+		// 		),
+		// 		// Using more than 1 authenticator, you must specify
+		// 		// which one is used as entry point.
+		// 		// 'entry_point' => 'app.token_authenticator',
+		// 	),
+		// 	'anonymous' => true,
+		// 	// configure where your users come from. Hardcode them, or load them from somewhere
+		// 	// https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
+		// 	'users' =>  function () use ($app) {
+		// 			return new UserProvider($app['db']);
+		// 		},
+		// 	// 'anonymous' => true
+		// 	// 'users' => array(
+		// 	// //raw password = foo
+		// 	//	 'test' => array('ROLE_USER', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
+		// 	// ),
+		// ),
+	),
+	 'access_control' => [
+        ['^/api/save_event', 'ROLE_DEMO']
+	],
+));
 
-$app['security.access_rules'] = array(
-array('^/api/save_event', 'ROLE_DEMO'),
-);
+// $app['security.access_rules'] = array(
+// array('^/api/save_event', 'ROLE_DEMO'),
+// );
 
 // $app['security.firewalls'] = array(
-//     'main' => array(
-//         'guard' => array(
-//             'authenticators' => array(
-//                 'app.token_authenticator'
-//             ),
-//             // Using more than 1 authenticator, you must specify
-//             // which one is used as entry point.
-//             // 'entry_point' => 'app.token_authenticator',
-//         ),
-//         // configure where your users come from. Hardcode them, or load them from somewhere
-//         // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
-//         // 'users' =>  function () use ($app) {
-//         //         return new UserProvider($app['db']);
-//         //     },
-//         // 'anonymous' => true
-//         'users' => array(
-//         //raw password = foo
-//             'test' => array('ROLE_USER', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
-//         ),
+//	 'main' => array(
+//		 'guard' => array(
+//			 'authenticators' => array(
+//				 'app.token_authenticator'
+//			 ),
+//			 // Using more than 1 authenticator, you must specify
+//			 // which one is used as entry point.
+//			 // 'entry_point' => 'app.token_authenticator',
+//		 ),
+//		 // configure where your users come from. Hardcode them, or load them from somewhere
+//		 // https://silex.symfony.com/doc/providers/security.html#defining-a-custom-user-provider
+//		 // 'users' =>  function () use ($app) {
+//		 //		 return new UserProvider($app['db']);
+//		 //	 },
+//		 // 'anonymous' => true
+//		 'users' => array(
+//		 //raw password = foo
+//			 'test' => array('ROLE_USER', '$2y$10$3i9/lVd8UOFIJ6PAMFt8gu3/r5g0qeCJvoSlLCsvMTythye19F77a'),
+//		 ),
 
-//     ),
+//	 ),
 // );
 
 
 
 // App Middleware
 $app->before(function (Request $request) {
-    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-        $data = json_decode($request->getContent(), true);
-        $request->request->replace(is_array($data) ? $data : array());
-    }
+	if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+		$data = json_decode($request->getContent(), true);
+		$request->request->replace(is_array($data) ? $data : array());
+	}
 });
 
 // Routes
 $app->get('/', function () use ($app) {
-    return $app['twig']->render('index.html.twig');
+	return $app['twig']->render('index.html.twig');
 });
 // $app->post('/signin', 'DefaultController::adminAction');
 // $app->post('/api/signup', 'SignupController::Signup');
@@ -167,14 +196,16 @@ $app->get('/', function () use ($app) {
 $app->get('/api/get_events', 'EventController::getAllEvents');
 $app->post('/api/save_event', 'EventController::saveEvent');
 
-$app->get('/login', function(Request $request) use ($app) {
-    return $app['twig']->render('login.html.twig', array(
-        'error'         => $app['security.last_error']($request),
-        'last_name' => $app['session']->get('_security.last_name'),
-    ));
-});
+// $app->post('/signin', function(Request $request) use ($app) {
+// 	return null;
+// 	// return $app['twig']->render('login.html.twig', array(
+// 	//	 'error'		 => $app['security.last_error']($request),
+// 	//	 'last_name' => $app['session']->get('_security.last_name'),
+// 	// ));
+// });
 
-$app->post('/admin/user', 'AuthenticationController::SignIn');
+$app->post('/signin', 'AuthenticationController::signIn');
+
 
 $app->run();
 

@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
-class TokenAuthenticator extends AbstractGuardAuthenticator
+class PasswordAuthenticator extends AbstractGuardAuthenticator
 {
 	private $encoderFactory;
 
@@ -19,22 +19,22 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 		$this->encoderFactory = $encoderFactory;
 	}
 
+	// public function supports(Request $request)
+ //    {
+ //        return $request->headers->has('X-AUTH-TOKEN');
+ //    }
+
 	public function getCredentials(Request $request)
 	{
-		// Checks if the credential header is provided
-		if (!$token = $request->headers->get('X-AUTH-TOKEN')) {
-			return;
-		}
-
-		// Parse the header or ignore it if the format is incorrect.
-		if (false === strpos($token, ':')) {
-			return;
-		}
-		list($username, $secret) = explode(':', $token, 2);
+		global $log;
+		// Checks if the username and password provided
+		$username = $request->request->get('_username');
+		$password = $request->request->get('_password');
+		$log->notice("username=$username and password=$password");
 
 		return array(
 			'username' => $username,
-			'secret' => $secret,
+			'secret' => $password,
 		);
 	}
 
@@ -59,8 +59,12 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
 	public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
 	{
-		// on success, let the request continue
-		return;
+		// // on success, return token
+		// $data = array(
+		// 	'token' => 'demo:foo'
+		// );
+		// return new JsonResponse($data, 200);
+		return null;
 	}
 
 	public function onAuthenticationFailure(Request $request, AuthenticationException $exception)

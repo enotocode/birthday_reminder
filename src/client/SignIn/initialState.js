@@ -20,7 +20,7 @@ const initialState = {
             {
                 name: "_password",
                 label: "Password",
-                value: "foo",
+                value: "foo1",
                 errorMessage: "",
                 required: "required",
                 type: "password",
